@@ -20,6 +20,9 @@
 }
 
 @theme inline {
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-montserrat);
+
   --color-brand: var(--brand);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -29,7 +32,15 @@
 }
 
 body {
+  font-family: var(--font-inter), ui-sans-serif, system-ui;
   background-color: var(--background);
   color: var(--foreground);
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1,
+h2,
+h3,
+.logo-text {
+  font-family: var(--font-montserrat);
 }
