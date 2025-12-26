@@ -1,4 +1,4 @@
-import BottomBar from "@/components/layout/BottomBar";
+import BottomBar from "@/components/bottom-bar/BottomBar";
 import Header from "@/components/layout/Header";
 import QueryProvider from "@/providers/QueryProvider";
 import { ThemeProvider } from "@/providers/ThemeProvider";
