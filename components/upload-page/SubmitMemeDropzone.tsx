@@ -14,9 +14,22 @@ export const SubmitMemeDropzone = ({
   onFileChange,
 }: SubmitMemeDropzoneProps) => (
   <label className="relative flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-card-border rounded-3xl bg-input-bg hover:bg-card transition-colors cursor-pointer overflow-hidden group">
-    {preview && type === "image" ? (
+    {preview && type === "image" && (
       <Image src={preview} fill alt="Preview" className="object-cover" />
-    ) : (
+    )}
+
+    {preview && type === "video" && (
+      <video
+        src={preview}
+        className="absolute inset-0 w-full h-full object-cover"
+        autoPlay
+        muted
+        loop
+        playsInline
+      />
+    )}
+
+    {!preview && (
       <div className="flex flex-col items-center gap-2">
         <Upload
           className="text-brand group-hover:scale-110 transition-transform"
@@ -27,6 +40,7 @@ export const SubmitMemeDropzone = ({
         </span>
       </div>
     )}
+
     <input
       type="file"
       accept={type === "image" ? "image/*" : "video/*"}

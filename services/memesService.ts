@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabase";
-import { FILTER_CATEGORIES } from "@/types/memes.types";
+import { FILTER_CATEGORIES, MemeType } from "@/types/memes.types";
 
+// get all
 export const fetchMemes = async (categoryId: string, search: string) => {
   let query = supabase
     .from("memes")
@@ -25,4 +26,41 @@ export const fetchMemes = async (categoryId: string, search: string) => {
   const filtered = data || [];
 
   return filtered;
+};
+
+// get by id
+export const fetchMemeById = async (id: number) => {
+  const { data, error } = await supabase
+    .from("memes")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
+// post
+export const createMeme = async (meme: {
+  title: string;
+  type: MemeType;
+  url: string;
+}) => {
+  const { data, error } = await supabase.from("memes").insert([meme]).select();
+
+  if (error) throw new Error(error.message);
+  return data;
+};
+
+// update needed?
+
+// delete
+export const deleteMeme = async (id: number) => {
+  const { data, error } = await supabase.from("memes").delete().eq("id", id);
+
+  if (error) throw new Error(error.message);
+  return data;
 };

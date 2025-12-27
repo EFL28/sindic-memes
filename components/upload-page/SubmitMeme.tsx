@@ -13,20 +13,24 @@ interface SubmitMemeProps {
 }
 
 export const SubmitMeme = ({ type }: SubmitMemeProps) => {
-  const { register, onSubmit, isSubmitting, isValid, errors } =
+  const { register, handleSubmit, isSubmitting, isValid, errors } =
     useMemeUpload(type);
 
   const [preview, setPreview] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) setPreview(URL.createObjectURL(file));
+    if (file) {
+      setSelectedFile(file);
+      setPreview(URL.createObjectURL(file));
+    }
   };
 
   const isFileStep = type === "image" || type === "video";
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-6">
+    <form onSubmit={handleSubmit(selectedFile)} className="flex flex-col gap-6">
       <div className="space-y-4">
         <SubmitMemeTitle register={register} error={errors.title} />
 
