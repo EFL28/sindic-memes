@@ -1,6 +1,9 @@
 "use client";
 
+import { useDebounce } from "@/hooks/useDebounce";
 import { Search } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { FilterButton } from "./FilterButton";
 
 interface SearchBarProps {
@@ -12,6 +15,27 @@ export const SearchBar = ({
   onToggleFilter,
   isFilterActive,
 }: SearchBarProps) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [text, setText] = useState(searchParams.get("q")?.toString() || "");
+  const debouncedSearch = useDebounce(text, 400);
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    const currentQuery = searchParams.get("q") || "";
+
+    if (debouncedSearch === currentQuery) return;
+
+    if (debouncedSearch) {
+      params.set("q", debouncedSearch);
+    } else {
+      params.delete("q");
+    }
+
+    router.push(`/?${params.toString()}`, { scroll: false });
+  }, [debouncedSearch, router, searchParams]);
+
   return (
     <div className="relative flex items-center gap-2 flex-1 max-w-xl group">
       <div className="relative flex-1">
@@ -22,6 +46,8 @@ export const SearchBar = ({
         <input
           type="text"
           placeholder="Buscar memes..."
+          defaultValue={searchParams.get("q")?.toString()}
+          onChange={(e) => setText(e.target.value)}
           className="w-full bg-input-bg border border-card-border rounded-full py-2 pl-10 pr-4 text-sm text-foreground focus:ring-2 focus:ring-brand focus:border-transparent outline-none transition-all shadow-sm"
         />
       </div>

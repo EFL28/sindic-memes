@@ -1,13 +1,10 @@
-export const MEMES_DATA: {
-  id: number;
-  type: MemeType;
-  title: string;
-  url: string;
-}[] = [
+import { Meme } from "@/types/memes.types";
+
+export const MEMES_DATA: Meme[] = [
   {
     id: 1,
     type: "image",
-    title: "Cuando el código compila a la primera",
+    title: "Foto 1",
     url: "https://picsum.photos/400/600",
   },
   {
@@ -25,18 +22,7 @@ export const MEMES_DATA: {
   {
     id: 4,
     type: "image",
-    title: "Expectativa vs Realidad",
+    title: "Foto 2",
     url: "https://picsum.photos/400/300",
   },
 ];
-
-export const MEMES_CATEGORIES = ["Todos", "Videos", "Fotos", "Links", "Tweets"];
-
-export type MemeType = "image" | "video" | "tweet" | "link";
-
-export const MemeTypeMap: Record<string, string> = {
-  fotos: "image",
-  videos: "video",
-  tweets: "tweet",
-  links: "link",
-};

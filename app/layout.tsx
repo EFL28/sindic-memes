@@ -4,6 +4,7 @@ import QueryProvider from "@/providers/QueryProvider";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import type { Metadata } from "next";
 import { Inter, Montserrat } from "next/font/google";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 const geistSans = Inter({
@@ -37,6 +38,7 @@ export default function RootLayout({
             <Header />
             {children}
             <BottomBar />
+            <Toaster richColors position="top-center" />
           </QueryProvider>
         </ThemeProvider>
       </body>

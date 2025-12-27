@@ -1,14 +1,26 @@
-//TODO: Implement
-export const fetchMemes = async (category: string, search: string) => {
-  let url = `https://api.sindicmemes.com/memes?category=${category}`;
+// TODO: redo wiht supabase
+import { FILTER_CATEGORIES } from "@/types/memes.types";
+import { MEMES_DATA } from "@/utils/memes.utils";
+
+export const fetchMemes = async (categoryId: string, search: string) => {
+  await new Promise((resolve) => setTimeout(resolve, 800)); // Simulación UX
+
+  let filtered = [...MEMES_DATA];
+
+  // Buscamos la categoría por ID (el que viene de la URL)
+  const category = FILTER_CATEGORIES.find((c) => c.id === categoryId);
+
+  // Si encontramos la categoría y tiene un tipo asociado, filtramos
+  if (category && category.type) {
+    filtered = filtered.filter((meme) => meme.type === category.type);
+  }
+
   if (search) {
-    url += `&search=${encodeURIComponent(search)}`;
+    const query = search.toLowerCase();
+    filtered = filtered.filter((meme) =>
+      meme.title.toLowerCase().includes(query)
+    );
   }
 
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error("Error fetching memes");
-  }
-
-  return response.json();
+  return filtered;
 };

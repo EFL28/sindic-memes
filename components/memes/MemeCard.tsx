@@ -1,6 +1,6 @@
 "use client";
 
-import { MemeType } from "@/utils/memes.utils";
+import { MemeType } from "@/types/memes.types";
 import { motion } from "framer-motion";
 import { Link as LinkIcon, Play } from "lucide-react";
 import Image from "next/image";

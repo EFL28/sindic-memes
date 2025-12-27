@@ -1,25 +1,24 @@
 "use client";
 
-import { MEMES_CATEGORIES } from "@/utils/memes.utils";
+import { FILTER_CATEGORIES } from "@/types/memes.types";
 import { motion } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export const FilterBar = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const activeCategory = searchParams.get("category")?.toLowerCase() || "todos";
+  const activeCategoryId = searchParams.get("category")?.toLowerCase() || "all";
 
-  const handleFilterClick = (category: string) => {
+  const handleFilterClick = (id: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    const lowerCategory = category.toLowerCase();
 
-    if (lowerCategory === "todos") {
+    if (id === "all") {
       params.delete("category");
     } else {
-      params.set("category", lowerCategory);
+      params.set("category", id);
     }
 
-    router.push(`/?${params.toString()}`);
+    router.push(`/?${params.toString()}`, { scroll: false });
   };
 
   return (
@@ -30,21 +29,18 @@ export const FilterBar = () => {
       className="overflow-hidden"
     >
       <div className="flex gap-2 py-4 overflow-x-auto no-scrollbar">
-        {MEMES_CATEGORIES.map((category) => {
-          const lowerCaseCategory = category.toLowerCase();
-          const isActive = activeCategory === lowerCaseCategory;
-
+        {FILTER_CATEGORIES.map((category) => {
           return (
             <button
-              key={category}
-              onClick={() => handleFilterClick(category)}
+              key={category.id}
+              onClick={() => handleFilterClick(category.id)}
               className={`whitespace-nowrap px-5 py-1.5 rounded-full border text-xs font-bold transition-all active:scale-95 ${
-                isActive
+                activeCategoryId === category.id
                   ? "bg-brand text-white border-brand shadow-md"
                   : "bg-input-bg border-card-border text-foreground/70 hover:border-brand/50"
               }`}
             >
-              {category}
+              {category.label}
             </button>
           );
         })}
