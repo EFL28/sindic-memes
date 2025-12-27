@@ -1,8 +1,11 @@
 import { supabase } from "@/lib/supabase";
-import { FILTER_CATEGORIES, MemeType } from "@/types/memes.types";
+import { FILTER_CATEGORIES, Meme, MemeType } from "@/types/memes.types";
 
 // get all
-export const fetchMemes = async (categoryId: string, search: string) => {
+export const fetchMemes = async (
+  categoryId: string,
+  search: string
+): Promise<Meme[]> => {
   let query = supabase
     .from("memes")
     .select("*")
@@ -29,7 +32,7 @@ export const fetchMemes = async (categoryId: string, search: string) => {
 };
 
 // get by id
-export const fetchMemeById = async (id: number) => {
+export const fetchMemeById = async (id: string): Promise<Meme> => {
   const { data, error } = await supabase
     .from("memes")
     .select("*")
@@ -44,11 +47,7 @@ export const fetchMemeById = async (id: number) => {
 };
 
 // post
-export const createMeme = async (meme: {
-  title: string;
-  type: MemeType;
-  url: string;
-}) => {
+export const createMeme = async (meme: Meme) => {
   const { data, error } = await supabase.from("memes").insert([meme]).select();
 
   if (error) throw new Error(error.message);
@@ -56,11 +55,34 @@ export const createMeme = async (meme: {
 };
 
 // update needed?
-
-// delete
-export const deleteMeme = async (id: number) => {
-  const { data, error } = await supabase.from("memes").delete().eq("id", id);
+export const updateMeme = async (
+  id: string,
+  meme: { title?: string; type?: MemeType; url?: string }
+) => {
+  const { data, error } = await supabase
+    .from("memes")
+    .update(meme)
+    .eq("id", id)
+    .select();
 
   if (error) throw new Error(error.message);
   return data;
+};
+
+// delete
+export const deleteMeme = async (id: string, url: string, type: string) => {
+  if (type === "image" || type === "video") {
+    const fileName = url.split("/").pop();
+    if (fileName) {
+      const { error: storageError } = await supabase.storage
+        .from("meme-uploads")
+        .remove([fileName]);
+
+      if (storageError)
+        console.error("Error borrando de storage:", storageError);
+    }
+  }
+
+  const { error } = await supabase.from("memes").delete().eq("id", id);
+  if (error) throw error;
 };

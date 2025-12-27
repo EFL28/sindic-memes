@@ -1,21 +1,37 @@
 "use client";
 
-import { MemeType } from "@/types/memes.types";
+import { deleteMeme, updateMeme } from "@/services/memesService";
+import { Meme } from "@/types/memes.types";
+import { useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { Link as LinkIcon, Play } from "lucide-react";
+import {
+  Check,
+  Link as LinkIcon,
+  Loader2,
+  Pencil,
+  Play,
+  Trash2,
+  X,
+} from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player";
 import { Tweet } from "react-tweet";
+import { toast } from "sonner";
 
-interface MemeProps {
-  type: MemeType;
-  title: string;
-  url: string;
-}
-
-export default function MemeCard({ type, title, url }: MemeProps) {
+export default function MemeCard({
+  id,
+  type,
+  title: initialTitle,
+  url,
+  created_at,
+}: Meme) {
   const [hasWindow, setHasWindow] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [title, setTitle] = useState(initialTitle);
+  const [isOperating, setIsOperating] = useState(false);
+
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -31,20 +47,76 @@ export default function MemeCard({ type, title, url }: MemeProps) {
 
   const tweetId = getTweetId(url);
 
+  const handleUpdate = async () => {
+    if (!title.trim() || title === initialTitle) return setIsEditing(false);
+    setIsOperating(true);
+    try {
+      await updateMeme(id, { title });
+
+      setIsEditing(false);
+
+      queryClient.invalidateQueries({ queryKey: ["memes"] }); // Refresca la home automáticamente
+
+      toast.success("Título actualizado");
+    } catch (error) {
+      toast.error("Error al actualizar");
+    } finally {
+      setIsOperating(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!confirm("¿Estás seguro de que quieres borrar este meme?")) return;
+
+    setIsOperating(true);
+
+    try {
+      await deleteMeme(id, url, type);
+
+      queryClient.invalidateQueries({ queryKey: ["memes"] });
+
+      toast.success("Meme eliminado");
+    } catch (error) {
+      toast.error("Error al eliminar");
+    } finally {
+      setIsOperating(false);
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ scale: 1.01 }}
-      className="break-inside-avoid mb-4 rounded-2xl overflow-hidden bg-card border border-card-border shadow-sm hover:shadow-md transition-all"
+      className="relative group break-inside-avoid mb-4 rounded-2xl overflow-hidden bg-card border border-card-border shadow-sm hover:shadow-md transition-all"
     >
+      <div className="absolute top-2 right-2 flex gap-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+        <button
+          onClick={() => setIsEditing(!isEditing)}
+          className="p-2 bg-white/90 dark:bg-black/90 rounded-full shadow-sm text-zinc-600 hover:text-brand"
+        >
+          <Pencil size={14} />
+        </button>
+
+        <button
+          onClick={handleDelete}
+          className="p-2 bg-white/90 dark:bg-black/90 rounded-full shadow-sm text-zinc-600 hover:text-red-500"
+        >
+          {isOperating ? (
+            <Loader2 size={14} className="animate-spin" />
+          ) : (
+            <Trash2 size={14} />
+          )}
+        </button>
+      </div>
+
       <div className="relative">
         {type === "image" && (
           <Image
             src={url}
             width={500}
             height={300}
-            alt={title}
+            alt={initialTitle}
             className="w-full h-auto block"
           />
         )}
@@ -97,15 +169,46 @@ export default function MemeCard({ type, title, url }: MemeProps) {
       </div>
 
       <div className="p-4">
-        <h3 className="text-sm font-bold text-foreground leading-tight tracking-tight">
-          {title}
-        </h3>
+        {isEditing ? (
+          <div className="flex items-center gap-2">
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full bg-input-bg border border-brand/50 rounded-lg px-2 py-1 text-sm outline-none focus:ring-1 focus:ring-brand"
+              autoFocus
+              onKeyDown={(e) => e.key === "Enter" && handleUpdate()}
+            />
+
+            <button
+              onClick={handleUpdate}
+              className="text-green-500 hover:scale-110"
+            >
+              <Check size={18} />
+            </button>
+            <button
+              onClick={() => {
+                setIsEditing(false);
+                setTitle(initialTitle);
+              }}
+              className="text-red-500 hover:scale-110"
+            >
+              <X size={18} />
+            </button>
+          </div>
+        ) : (
+          <>
+            <h3 className="text-sm font-bold text-foreground leading-tight tracking-tight">
+              {initialTitle}
+            </h3>
+          </>
+        )}
         <div className="mt-4 flex items-center justify-between">
           <span className="text-[10px] bg-brand/10 text-brand px-2.5 py-1 rounded-full uppercase tracking-widest font-black">
             {type}
           </span>
+
           <span className="text-[10px] text-foreground/40 font-medium">
-            Añadido hoy
+            Añadido {created_at?.split("T")[0]}
           </span>
         </div>
       </div>

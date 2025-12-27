@@ -1,10 +1,11 @@
 export const MEMES_CATEGORIES = ["All", "Videos", "Photos", "Links", "Tweets"];
 
 export type Meme = {
-  id: number;
-  type: MemeType;
+  id: string;
   title: string;
+  type: MemeType;
   url: string;
+  created_at?: string;
 };
 
 export type MemeUploadOptionType = {
