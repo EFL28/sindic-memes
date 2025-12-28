@@ -1,0 +1,14 @@
+#### To Do
+- [ ] Bot de telegram
+- [ ] Autoplay en videos
+- [ ] Separar links de redes sociales (TikToks, IG Reels)
+- [ ] Mejorar gestión de URLs (YouTube, GIFs)
+- [ ] Implementar botón de share a redes sociales
+- [ ] Mejorar preview de videos con autoplay
+- [ ] Mejorar preview de tweets (se ven muy feos)
+- [ ] Implementar auth
+- [ ] Implementar grupos
+- [ ] Implementar idiomas
+- [ ] Implementar página de settings
+- [ ] Sistema de hashtags
+- [ ] Mejorar search bar
