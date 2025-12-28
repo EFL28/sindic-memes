@@ -88,7 +88,7 @@ export default function MemeCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ scale: 1.01 }}
-      className="relative group break-inside-avoid mb-4 rounded-2xl overflow-hidden bg-card border border-card-border shadow-sm hover:shadow-md transition-all"
+      className="relative break-inside-avoid mb-4 rounded-2xl overflow-hidden bg-card border border-card-border shadow-sm transition-all"
     >
       <div className="absolute top-2 right-2 flex gap-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
         <button
@@ -170,7 +170,7 @@ export default function MemeCard({
 
       <div className="p-4">
         {isEditing ? (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 mb-3">
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -178,11 +178,7 @@ export default function MemeCard({
               autoFocus
               onKeyDown={(e) => e.key === "Enter" && handleUpdate()}
             />
-
-            <button
-              onClick={handleUpdate}
-              className="text-green-500 hover:scale-110"
-            >
+            <button onClick={handleUpdate} className="text-green-500">
               <Check size={18} />
             </button>
             <button
@@ -190,26 +186,53 @@ export default function MemeCard({
                 setIsEditing(false);
                 setTitle(initialTitle);
               }}
-              className="text-red-500 hover:scale-110"
+              className="text-red-500"
             >
               <X size={18} />
             </button>
           </div>
         ) : (
-          <>
-            <h3 className="text-sm font-bold text-foreground leading-tight tracking-tight">
-              {initialTitle}
-            </h3>
-          </>
+          <h3 className="text-sm font-bold text-foreground leading-tight tracking-tight mb-3">
+            {initialTitle}
+          </h3>
         )}
-        <div className="mt-4 flex items-center justify-between">
-          <span className="text-[10px] bg-brand/10 text-brand px-2.5 py-1 rounded-full uppercase tracking-widest font-black">
-            {type}
-          </span>
 
-          <span className="text-[10px] text-foreground/40 font-medium">
-            Añadido {created_at?.split("T")[0]}
-          </span>
+        <div className="flex items-center justify-between gap-2">
+          {/* Tag y Fecha */}
+          <div className="flex flex-col gap-1">
+            <span className="w-fit text-[10px] bg-brand/10 text-brand px-2 py-0.5 rounded-full uppercase font-black">
+              {type}
+            </span>
+            <span className="text-[9px] text-foreground/40 font-medium">
+              {created_at?.split("T")[0]}
+            </span>
+          </div>
+
+          {/* Botones de Acción (Siempre visibles) */}
+          <div className="flex items-center gap-1">
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setIsEditing(!isEditing)}
+              className="p-2.5 bg-zinc-100 dark:bg-zinc-800 rounded-full text-zinc-600 dark:text-zinc-400"
+              aria-label="Editar"
+            >
+              <Pencil size={14} />
+            </motion.button>
+
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              onClick={handleDelete}
+              disabled={isOperating}
+              className="p-2.5 bg-red-50 dark:bg-red-900/20 rounded-full text-red-500"
+              aria-label="Eliminar"
+            >
+              {isOperating ? (
+                <Loader2 size={14} className="animate-spin" />
+              ) : (
+                <Trash2 size={14} />
+              )}
+            </motion.button>
+          </div>
         </div>
       </div>
     </motion.div>
