@@ -12,3 +12,4 @@
 - [ ] Implementar página de settings
 - [ ] Sistema de hashtags
 - [ ] Mejorar search bar
+- [ ] Gestion de contenido en general (ahora todo el mundo ve, borra o edita todo)
