@@ -47,9 +47,10 @@ export const useMemeUpload = (type: MemeType) => {
       }
 
       await createMeme({
+        id: crypto.randomUUID(),
         title: data.title,
-        type: type,
-        url: finalUrl || "",
+        url: finalUrl as string,
+        type,
       });
 
       toast.success("¡Meme guardado con éxito!");
