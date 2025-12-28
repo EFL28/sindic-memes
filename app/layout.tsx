@@ -4,6 +4,7 @@ import QueryProvider from "@/providers/QueryProvider";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import type { Metadata } from "next";
 import { Inter, Montserrat } from "next/font/google";
+import { Suspense } from "react";
 import { Toaster } from "sonner";
 import "./globals.css";
 
@@ -35,7 +36,9 @@ export default function RootLayout({
       >
         <ThemeProvider>
           <QueryProvider>
-            <Header />
+            <Suspense fallback={<div className="h-20" />}>
+              <Header />
+            </Suspense>
             {children}
             <BottomBar />
             <Toaster richColors position="top-center" />
