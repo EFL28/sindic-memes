@@ -2,6 +2,7 @@ import { UploadHeader } from "@/components/upload-page/UploadHeader";
 import { UploadOption } from "@/components/upload-page/UploadOption";
 import { MemeUploadOptionType } from "@/types/memes.types";
 
+//TODO: indicar extensions por cada option
 const memeUploadOptions: MemeUploadOptionType[] = [
   {
     id: "image",

@@ -5,6 +5,7 @@ export type Meme = {
   title: string;
   type: MemeType;
   url: string;
+  keywords?: string[];
   created_at?: string;
 };
 
